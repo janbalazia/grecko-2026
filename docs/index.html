@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="./icon-180.png">
 <link rel="icon" href="./icon-192.png">
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./satellite.css">
 </head>
 <body>
 <div class="app">
@@ -27,10 +28,10 @@
 <article class="card selected-card"><div class="point-icon" id="point-icon">📍</div><div class="selected-copy"><div class="kicker" id="selected-kicker"></div><h2 id="selected-title"></h2><div class="meta" id="selected-meta"></div><p id="selected-text"></p><div class="actions"><a class="action primary" id="selected-maps" target="_blank" rel="noopener">Navigovať</a><button class="action" id="show-in-days">Zobraziť v dni</button></div></div></article>
 </section>
 <section class="view" id="view-days"><div class="section-head"><div><h2>Itinerár</h2><p>Program, nocľahy a aktivity po dňoch</p></div></div><div id="days-list"></div></section>
-<section class="view" id="view-info"><div class="section-head"><div><h2>Informácie</h2><p>Nastavenie cesty a offline režimu</p></div></div><div class="info-grid"><div class="card info-card"><h3>Dátum začiatku</h3><p>Appka potom označí aktuálny deň itinerára. Dátum zostáva iba v telefóne.</p><label for="trip-start">Deň 1</label><input type="date" id="trip-start"></div><div class="card info-card"><h3>Pridať na plochu</h3><ol><li>Otvor stránku v Safari.</li><li>Ťukni na <b>Zdieľať</b>.</li><li>Vyber <b>Pridať na plochu</b>.</li></ol></div><div class="card info-card"><h3>Offline režim</h3><p id="sw-state">Kontrolujem offline cache…</p></div><div class="card info-card"><h3>Legenda</h3><p><span class="dot night-dot"></span> nocľah &nbsp; <span class="dot activity-dot"></span> aktivita</p></div></div></section>
+<section class="view" id="view-info"><div class="section-head"><div><h2>Informácie</h2><p>Nastavenie cesty a offline režimu</p></div></div><div class="info-grid"><div class="card info-card"><h3>Dátum začiatku</h3><p>Appka potom označí aktuálny deň itinerára. Dátum zostáva iba v telefóne.</p><label for="trip-start">Deň 1</label><input type="date" id="trip-start"></div><div class="card info-card"><h3>Pridať na plochu</h3><ol><li>Otvor stránku v Safari.</li><li>Ťukni na <b>Zdieľať</b>.</li><li>Vyber <b>Pridať na plochu</b>.</li></ol></div><div class="card info-card"><h3>Offline režim</h3><p id="sw-state">Kontrolujem offline cache…</p></div><div class="card info-card"><h3>Legenda</h3><p><span class="dot night-dot"></span> nocľah &nbsp; <span class="dot activity-dot"></span> aktivita</p></div><div class="card info-card"><h3>Satelitný podklad</h3><p>Online mapa používa EOxCloudless Sentinel-2 2025. Satelitné snímky sa neukladajú do offline cache; bez internetu appka používa schému trasy.</p></div></div></section>
 </main>
 </div>
 <nav class="bottomnav" aria-label="Navigácia"><button class="navbtn active" data-view="map">🗺️<span>Mapa</span></button><button class="navbtn" data-view="days">🗓️<span>Dni</span></button><button class="navbtn" data-view="info">⚙️<span>Info</span></button></nav>
 <div class="toast" id="toast"></div>
-<script src="./data.js"></script><script src="./app.js"></script>
+<script src="./data.js"></script><script src="./app.js"></script><script src="./satellite.js"></script>
 </body></html>
