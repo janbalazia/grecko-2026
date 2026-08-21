@@ -1,4 +1,4 @@
-const C='grecko-2026-v5';
+const C='grecko-2026-v6';
 const LOCAL=['./','./index.html','./styles.css','./leaflet-app.css','./data.js','./app.js','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
 const EXT=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{const c=await caches.open(C);await c.addAll(LOCAL);for(const u of EXT){try{const r=await fetch(u,{mode:'cors'});if(r.ok)await c.put(u,r)}catch(_){}}await self.skipWaiting()})()));
