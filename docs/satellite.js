@@ -17,12 +17,22 @@
     minY+((585-y)/550)*(maxY-minY)
   ];
 
-  const image=document.createElementNS(NS,'image');
-  image.id='satellite-layer';
-  image.setAttribute('preserveAspectRatio','none');
-  image.setAttribute('aria-hidden','true');
-  image.style.pointerEvents='none';
-  stage.insertBefore(image,stage.firstChild);
+  const routeHalo=document.querySelector('#route-halo');
+  const makeImage=()=>{
+    const image=document.createElementNS(NS,'image');
+    image.classList.add('satellite-layer');
+    image.setAttribute('preserveAspectRatio','none');
+    image.setAttribute('aria-hidden','true');
+    image.style.pointerEvents='none';
+    stage.insertBefore(image,routeHalo||stage.firstChild);
+    return image;
+  };
+
+  let activeImage=makeImage();
+  activeImage.id='satellite-layer';
+  let pendingImage=null;
+  let activeUrl='';
+  let requestSeq=0;
 
   const switcher=document.createElement('div');
   switcher.className='map-style-switch';
@@ -36,7 +46,7 @@
   wrap.append(attribution);
 
   let style=localStorage.getItem('greckoMapStyle')||'satellite';
-  let timer=0,lastUrl='';
+  let timer=0;
 
   const transform=()=>{
     const t=stage.getAttribute('transform')||'';
@@ -52,36 +62,77 @@
     return 'https://tiles.maps.eox.at/?'+q.toString();
   };
 
+  const discardPending=()=>{
+    if(pendingImage){pendingImage.remove();pendingImage=null;}
+  };
+
   function refresh(){
     clearTimeout(timer);
     if(style!=='satellite'||!navigator.onLine){
-      image.style.display='none';
+      requestSeq++;
+      discardPending();
+      activeImage.style.display='none';
       attribution.hidden=true;
       return;
     }
 
     const z=transform();
     let left=(0-z.x)/z.s,right=(W-z.x)/z.s,top=(0-z.y)/z.s,bottom=(H-z.y)/z.s;
-    const padX=(right-left)*.32,padY=(bottom-top)*.32;
+
+    // Keep a generous overscan around the viewport. During a drag the current
+    // raster stays fixed in map coordinates and moves with the route; a new
+    // raster is requested only after the gesture settles.
+    const padX=(right-left)*.55,padY=(bottom-top)*.55;
     left-=padX;right+=padX;top-=padY;bottom+=padY;
 
     const [lonLeft,latTop]=inv([left,top]);
     const [lonRight,latBottom]=inv([right,bottom]);
     const bbox=[lonLeft,latBottom,lonRight,latTop].map(v=>+v.toFixed(7));
-    const reqW=1200;
-    const reqH=Math.max(480,Math.min(1200,Math.round(reqW*(bottom-top)/(right-left))));
+    const reqW=1400;
+    const reqH=Math.max(560,Math.min(1400,Math.round(reqW*(bottom-top)/(right-left))));
     const url=buildUrl(bbox,reqW,reqH);
 
-    image.setAttribute('x',left);
-    image.setAttribute('y',top);
-    image.setAttribute('width',right-left);
-    image.setAttribute('height',bottom-top);
-    image.style.display='block';
+    activeImage.style.display='block';
     attribution.hidden=false;
-    if(url!==lastUrl){lastUrl=url;image.setAttribute('href',url)}
+    if(url===activeUrl)return;
+
+    const seq=++requestSeq;
+    discardPending();
+    const next=makeImage();
+    pendingImage=next;
+    next.setAttribute('x',left);
+    next.setAttribute('y',top);
+    next.setAttribute('width',right-left);
+    next.setAttribute('height',bottom-top);
+
+    next.addEventListener('load',()=>{
+      if(seq!==requestSeq||style!=='satellite'||!navigator.onLine){
+        next.remove();
+        if(pendingImage===next)pendingImage=null;
+        return;
+      }
+      const previous=activeImage;
+      next.classList.add('loaded');
+      next.id='satellite-layer-next';
+      activeImage=next;
+      pendingImage=null;
+      activeUrl=url;
+      setTimeout(()=>{
+        if(previous&&previous!==activeImage)previous.remove();
+        activeImage.id='satellite-layer';
+      },240);
+    },{once:true});
+
+    next.addEventListener('error',()=>{
+      if(pendingImage===next)pendingImage=null;
+      next.remove();
+      if(!activeUrl){activeImage.style.display='none';attribution.hidden=true;}
+    },{once:true});
+
+    next.setAttribute('href',url);
   }
 
-  function schedule(){clearTimeout(timer);timer=setTimeout(refresh,180)}
+  function schedule(){clearTimeout(timer);timer=setTimeout(refresh,220)}
 
   function applyStyle(next,announce=true){
     style=next;
@@ -102,8 +153,6 @@
   new MutationObserver(schedule).observe(stage,{attributes:true,attributeFilter:['transform']});
   addEventListener('online',()=>refresh());
   addEventListener('offline',()=>refresh());
-  image.addEventListener('error',()=>{image.style.display='none';attribution.hidden=true});
-  image.addEventListener('load',()=>image.classList.add('loaded'));
 
   applyStyle(style,false);
 })();
