@@ -8,14 +8,13 @@
   const weatherById=new Map();
   const $=(s,r=document)=>r.querySelector(s);
 
-  const selectedCopy=$('.selected-copy');
-  const selectedActions=$('.selected-copy .actions');
+  const selectedCard=$('.selected-card');
   const selectedTitle=$('#selected-title');
   const selectedWeather=document.createElement('section');
   selectedWeather.id='selected-weather';
   selectedWeather.className='weather-panel selected-weather';
   selectedWeather.hidden=true;
-  if(selectedCopy)selectedCopy.insertBefore(selectedWeather,selectedActions||null);
+  if(selectedCard)selectedCard.append(selectedWeather);
 
   const inlineHosts=new Map();
   for(const n of nights){
@@ -150,7 +149,7 @@
     if(weatherById.size)renderAll(true);
     else{
       for(const host of inlineHosts.values()){host.classList.remove('weather-loading');host.innerHTML='<div class="weather-error">Počasie sa nepodarilo načítať.</div>'}
-      renderSelected(true);
+      selectedWeather.hidden=true;
     }
   });
 })();
