@@ -1,5 +1,5 @@
-const C='grecko-2026-v10';
-const LOCAL=['./','./index.html','./styles.css?v=10','./leaflet-app.css?v=10','./data.js?v=10','./app.js?v=10','./weather.js?v=10','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
+const C='grecko-2026-v11';
+const LOCAL=['./','./index.html','./styles.css?v=11','./leaflet-app.css?v=11','./trip-extras.css?v=11','./data.js?v=11','./app.js?v=11','./trip-extras.js?v=11','./weather.js?v=11','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
 const EXT=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{const c=await caches.open(C);await c.addAll(LOCAL);for(const u of EXT){try{const r=await fetch(u,{mode:'cors'});if(r.ok)await c.put(u,r)}catch(_){}}await self.skipWaiting()})()));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(x=>x!==C).map(x=>caches.delete(x)));await self.clients.claim()})()));
