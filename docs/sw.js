@@ -1,5 +1,5 @@
-const C='grecko-2026-v7';
-const LOCAL=['./','./index.html','./styles.css?v=7','./leaflet-app.css?v=7','./data.js?v=7','./app.js?v=7','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
+const C='grecko-2026-v8';
+const LOCAL=['./','./index.html','./styles.css?v=8','./leaflet-app.css?v=8','./data.js?v=8','./app.js?v=8','./manifest.webmanifest','./icon-180.png','./icon-192.png','./icon-512.png'];
 const EXT=['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css','https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 self.addEventListener('install',e=>e.waitUntil((async()=>{const c=await caches.open(C);await c.addAll(LOCAL);for(const u of EXT){try{const r=await fetch(u,{mode:'cors'});if(r.ok)await c.put(u,r)}catch(_){}}await self.skipWaiting()})()));
 self.addEventListener('activate',e=>e.waitUntil((async()=>{const keys=await caches.keys();await Promise.all(keys.filter(x=>x!==C).map(x=>caches.delete(x)));await self.clients.claim()})()));
